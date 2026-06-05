@@ -1,0 +1,58 @@
+# ==========================================
+# DEPENDÊNCIAS (Node.js / React)
+# ==========================================
+node_modules/
+/frontend/node_modules/
+/backend/node_modules/
+
+# ==========================================
+# SEGURANÇA / VARIÁVEIS DE AMBIENTE
+# ==========================================
+# Ignora arquivos com senhas e chaves de API
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+backend/.env
+frontend/.env
+
+# ==========================================
+# BUILDS E PRODUÇÃO
+# ==========================================
+dist/
+/frontend/dist/
+build/
+.cache/
+
+# ==========================================
+# LOGS DO SISTEMA
+# ==========================================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+logs/
+*.log
+
+# ==========================================
+# ARQUIVOS DE IDEs E SISTEMA OPERACIONAL
+# ==========================================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# DOCKER / DADOS LOCAIS
+# ==========================================
+# Ignora caso alguém crie uma pasta local para despejo do banco
+.docker/
+postgres_data/
+*.db

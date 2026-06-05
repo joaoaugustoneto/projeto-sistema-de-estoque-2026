@@ -15,7 +15,7 @@ Cadastre produtos, acompanhe a listagem em tempo real e conte com uma infraestru
 
 ### 👥 Equipe
 
-| [Nome Pessoa 1](https://github.com/usuario1) | [Nome Pessoa 2](https://github.com/usuario2) | [Nome Pessoa 3](https://github.com/usuario3) |
+| [André](https://github.com/usuario1) | [Guilherme Miranda](https://github.com/Huzume) | [João Augusto](https://github.com/joaoaugustoneto) |
 |:---:|:---:|:---:|
 | Frontend | Backend | DevOps & QA |
 
@@ -87,6 +87,7 @@ stock-manager/
 │   └── init.sql                # Criação das tabelas do PostgreSQL
 │
 ├── docker-compose.yml          # Orquestração dos containers e volumes
+├── LICENSE                     # Licença do MIT, usada no projeto
 └── README.md                   # Documentação do projeto
 
 ```

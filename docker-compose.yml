@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # BANCO DE DADOS (PostgreSQL)
+  # ==========================================
+  db:
+    image: postgres:15-alpine
+    container_name: stock_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: stock_db
+    ports:
+      - "5432:5432"
+    volumes:
+      # Volume nomeado para resolver o erro: "Banco perde dados após reinicialização"
+      - pgdata:/var/lib/postgresql/data
+      # Executa o script de criação de tabelas na primeira vez que o banco subir
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - stock-network
+    # Healthcheck: verifica se o banco está realmente pronto para receber conexões
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d stock_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================
+  # BACKEND (Node.js + Express)
+  # ==========================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: stock_backend
+    restart: always
+    environment:
+      - PORT=3000
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=admin
+      - DB_PASSWORD=adminpassword
+      - DB_NAME=stock_db
+    ports:
+      - "3000:3000"
+    networks:
+      - stock-network
+    depends_on:
+      db:
+        # Resolve o erro: "Containers sobem fora de ordem". 
+        # O backend só inicia depois que o healthcheck do 'db' der "healthy" (saudável).
+        condition: service_healthy
+
+  # ==========================================
+  # FRONTEND (React + Vite)
+  # ==========================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: stock_frontend
+    restart: always
+    environment:
+      # O frontend roda no browser do cliente, logo deve apontar para localhost
+      - VITE_API_URL=http://localhost:3000
+    ports:
+      - "5173:5173"
+    networks:
+      - stock-network
+    depends_on:
+      - backend
+
+# ==========================================
+# CONFIGURAÇÕES GLOBAIS DE REDE E VOLUMES
+# ==========================================
+networks:
+  stock-network:
+    driver: bridge # Cria uma rede interna isolada para os 3 containers conversarem
+
+volumes:
+  pgdata: # Declaração do volume persistente do banco de dados

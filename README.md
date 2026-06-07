@@ -15,7 +15,7 @@ Cadastre produtos, acompanhe a listagem em tempo real e conte com uma infraestru
 
 ### 👥 Equipe
 
-| [André](https://github.com/usuario1) | [Guilherme Miranda](https://github.com/Huzume) | [João Augusto](https://github.com/joaoaugustoneto) |
+| [André](https://github.com/zsilly) | [Guilherme Miranda](https://github.com/Huzume) | [João Augusto](https://github.com/joaoaugustoneto) |
 |:---:|:---:|:---:|
 | Frontend | Backend | DevOps & QA |
 

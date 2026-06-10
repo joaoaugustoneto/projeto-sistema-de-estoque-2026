@@ -1,26 +1,103 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Menu from './components/Menu'; // Importação correta da pasta de componentes
-import Inicio from './pages/Inicio';
-import Cadastro from './pages/Cadastro';
-import Listagem from './pages/Listagem';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AppProvider, useApp } from './context/AppContext';
+import Sidebar from './components/Sidebar';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import Dashboard from './pages/Dashboard';
+import StockList from './pages/StockList';
+import StockForm from './pages/StockForm';
+
+// Route guard for authenticated users
+function PrivateRoute({ children }) {
+  const { currentUser } = useApp();
+  
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return (
+    <div className="app-container">
+      <Sidebar />
+      <main className="main-content">
+        {children}
+      </main>
+    </div>
+  );
+}
+
+// Route guard for non-authenticated users (redirect to dashboard if logged in)
+function PublicRoute({ children }) {
+  const { currentUser } = useApp();
+
+  if (currentUser) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+}
 
 function App() {
   return (
-    <BrowserRouter>
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        
-        {/* Chamada do Componente do Menu isolado */}
-        <Menu />
-
-        {/* Gerenciador de Rotas SPA */}
+    <AppProvider>
+      <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Inicio />} />
-          <Route path="/cadastro" element={<Cadastro />} />
-          <Route path="/listagem" element={<Listagem />} />
-        </Routes>
+          {/* Public Authentication Routes */}
+          <Route 
+            path="/login" 
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            } 
+          />
+          <Route 
+            path="/cadastro" 
+            element={
+              <PublicRoute>
+                <SignUp />
+              </PublicRoute>
+            } 
+          />
 
-      </div>
-    </BrowserRouter>
+          {/* Protected Stock System Routes */}
+          <Route 
+            path="/" 
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/estoque" 
+            element={
+              <PrivateRoute>
+                <StockList />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/estoque/adicionar" 
+            element={
+              <PrivateRoute>
+                <StockForm />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/estoque/editar/:id" 
+            element={
+              <PrivateRoute>
+                <StockForm />
+              </PrivateRoute>
+            } 
+          />
+
+          {/* Catch-all route */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AppProvider>
   );
 }
 

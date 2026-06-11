@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  # =============================================================
+# =============================================================
   # JOB 1: Testes e Validação do Código (Garante a Qualidade)
   # =============================================================
   test-and-validate:
@@ -16,6 +16,13 @@ jobs:
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
+
+      # 🟢 NOVO PASSO: Sobe o banco de dados usando o compose que já criamos!
+      - name: Subir o Banco de Dados para Testes
+        run: |
+          docker compose up -d db
+          echo "Aguardando 10 segundos para o banco criar as tabelas (init.sql)..."
+          sleep 10
 
       - name: Configurar Node.js
         uses: actions/setup-node@v4
@@ -26,7 +33,14 @@ jobs:
             backend/package.json
             frontend/package.json
 
+      # 🟢 NOVO PASSO: Passar as credenciais para o teste conectar no localhost
       - name: Instalar dependências e Testar o Backend
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: admin
+          DB_PASSWORD: adminpassword
+          DB_NAME: stock_db
         run: |
           cd backend
           npm install
@@ -37,7 +51,6 @@ jobs:
           cd frontend
           npm install
           npm run build
-
   # =============================================================
   # JOB 2: Construção e Publicação das Imagens Docker
   # =============================================================

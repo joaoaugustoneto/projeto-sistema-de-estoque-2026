@@ -15,13 +15,10 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      # Volume nomeado para resolver o erro: "Banco perde dados após reinicialização"
       - pgdata:/var/lib/postgresql/data
-      # Executa o script de criação de tabelas na primeira vez que o banco subir
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - stock-network
-    # Healthcheck: verifica se o banco está realmente pronto para receber conexões
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d stock_db"]
       interval: 10s
@@ -50,12 +47,10 @@ services:
       - stock-network
     depends_on:
       db:
-        # Resolve o erro: "Containers sobem fora de ordem". 
-        # O backend só inicia depois que o healthcheck do 'db' der "healthy" (saudável).
         condition: service_healthy
 
   # ==========================================
-  # FRONTEND (React + Vite)
+  # FRONTEND (React + Vite + Nginx)
   # ==========================================
   frontend:
     build:
@@ -64,10 +59,11 @@ services:
     container_name: stock_frontend
     restart: always
     environment:
-      # O frontend roda no browser do cliente, logo deve apontar para localhost
       - VITE_API_URL=http://localhost:3000
     ports:
-      - "5173:5173"
+      # A porta externa pode ser 8080 (para você acessar no navegador), 
+      # mas a porta interna do container DEVE ser 80 por causa do Nginx.
+      - "8080:80" 
     networks:
       - stock-network
     depends_on:
@@ -78,7 +74,7 @@ services:
 # ==========================================
 networks:
   stock-network:
-    driver: bridge # Cria uma rede interna isolada para os 3 containers conversarem
+    driver: bridge
 
 volumes:
-  pgdata: # Declaração do volume persistente do banco de dados
+  pgdata:

@@ -59,6 +59,7 @@ const updateProduct = async (req, res) => {
 };
 
 // Remove um produto do banco de dados
+// Retorna 204 No Content conforme padrão REST (exclusão não tem corpo de resposta)
 const deleteProduct = async (req, res) => {
     const { id } = req.params;
 
@@ -70,7 +71,8 @@ const deleteProduct = async (req, res) => {
             return res.status(404).json({ error: 'Produto não encontrado.' });
         }
         
-        res.status(200).json({ message: 'Produto deletado com sucesso.', produto: result.rows[0] });
+        // 204 No Content: exclusão bem-sucedida, sem corpo de resposta
+        res.status(204).end();
     } catch (error) {
         res.status(500).json({ error: 'Erro ao deletar produto no banco de dados.' });
     }

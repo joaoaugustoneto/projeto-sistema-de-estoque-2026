@@ -47,5 +47,23 @@ describe('🧪 Testes da API de Gerenciamento de Estoque', () => {
             expect(res.statusCode).toEqual(400);
             expect(res.body).toHaveProperty('error');
         });
+
+        it('PUT /produtos/:id - Deve retornar 404 se tentar atualizar produto que nao existe', async () => {
+            const produtoUpdate = {
+                nome: "Produto Editado",
+                descricao: "Editado",
+                quantidade: 10,
+                preco: 20.00
+            };
+            const res = await request(app).put('/produtos/9999').send(produtoUpdate);
+            expect(res.statusCode).toEqual(404);
+            expect(res.body).toHaveProperty('error', 'Produto não encontrado.');
+        });
+
+        it('DELETE /produtos/:id - Deve retornar 404 se tentar deletar produto que nao existe', async () => {
+            const res = await request(app).delete('/produtos/9999');
+            expect(res.statusCode).toEqual(404);
+            expect(res.body).toHaveProperty('error', 'Produto não encontrado.');
+        });
     });
 });

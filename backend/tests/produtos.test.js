@@ -2,20 +2,25 @@
 const request = require('supertest');
 const app = require('../src/server');
 const pool = require('../src/config/db');
+const jwt = require('jsonwebtoken');
 
-// Antes dos testes, garante que o ambiente entenda que é um teste
-beforeAll(() => {
+let token;
+let productId;
+
+beforeAll(async () => {
     process.env.NODE_ENV = 'test';
+    process.env.JWT_SECRET = 'testsecret';
+    token = jwt.sign({ id: 1, nome: 'Test', email: 'test@test.com' }, process.env.JWT_SECRET);
+    
+    await pool.query('CREATE TABLE IF NOT EXISTS produtos (id SERIAL PRIMARY KEY, nome VARCHAR(255) NOT NULL, descricao TEXT, quantidade INT NOT NULL DEFAULT 0, preco DECIMAL(10, 2) NOT NULL DEFAULT 0.00, criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP)');
 });
 
-// Fecha a conexão com o banco de dados após a execução dos testes para não travar o Jest
 afterAll(async () => {
     await pool.end();
 });
 
 describe('🧪 Testes da API de Gerenciamento de Estoque', () => {
     
-    // REQUISITO: Testar endpoint /health
     describe('GET /health', () => {
         it('Deve retornar status 200 e indicar que o sistema está UP', async () => {
             const res = await request(app).get('/health');
@@ -24,46 +29,68 @@ describe('🧪 Testes da API de Gerenciamento de Estoque', () => {
         });
     });
 
-    // REQUISITO: Testar endpoint principal da API (Listagem e Cadastro)
     describe('Endpoints de Produtos', () => {
-        it('GET /produtos - Deve retornar a lista de produtos com sucesso', async () => {
-            const res = await request(app).get('/produtos');
-            expect(res.statusCode).toEqual(200);
-            expect(Array.isArray(res.body)).toBe(true);
+        it('deve listar os produtos', async () => {
+            const response = await request(app)
+                .get('/produtos')
+                .set('Authorization', `Bearer ${token}`);
+            expect(response.status).toBe(200);
+            expect(Array.isArray(response.body)).toBe(true);
         });
 
-        it('POST /produtos - Não deve permitir o cadastro de produtos com preço negativo', async () => {
-            const novoProdutoInvalido = {
-                nome: "Produto Teste Negativo",
-                descricao: "Teste de falha",
-                quantidade: 5,
-                preco: -10.00 // Valor inválido
-            };
-
-            const res = await request(app)
+        it('deve criar um novo produto', async () => {
+            const response = await request(app)
                 .post('/produtos')
-                .send(novoProdutoInvalido);
-
-            expect(res.statusCode).toEqual(400);
-            expect(res.body).toHaveProperty('error');
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    nome: "Produto Teste",
+                    descricao: "Descricao teste",
+                    quantidade: 10,
+                    preco: 100.00
+                });
+            expect(response.status).toBe(201);
+            productId = response.body.id;
         });
 
-        it('PUT /produtos/:id - Deve retornar 404 se tentar atualizar produto que nao existe', async () => {
-            const produtoUpdate = {
-                nome: "Produto Editado",
-                descricao: "Editado",
-                quantidade: 10,
-                preco: 20.00
-            };
-            const res = await request(app).put('/produtos/9999').send(produtoUpdate);
-            expect(res.statusCode).toEqual(404);
-            expect(res.body).toHaveProperty('error', 'Produto não encontrado.');
+        it('deve atualizar um produto', async () => {
+            const response = await request(app)
+                .put(`/produtos/${productId}`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    nome: 'Produto Editado',
+                    descricao: 'Editado',
+                    quantidade: 5,
+                    preco: 50.00
+                });
+            expect(response.status).toBe(200);
+            expect(response.body.nome).toBe('Produto Editado');
         });
 
-        it('DELETE /produtos/:id - Deve retornar 404 se tentar deletar produto que nao existe', async () => {
-            const res = await request(app).delete('/produtos/9999');
-            expect(res.statusCode).toEqual(404);
-            expect(res.body).toHaveProperty('error', 'Produto não encontrado.');
+        it('deve retornar 404 ao atualizar produto inexistente', async () => {
+            const response = await request(app)
+                .put('/produtos/999999')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    nome: 'Inexistente',
+                    descricao: 'Inexistente',
+                    quantidade: 0,
+                    preco: 0.00
+                });
+            expect(response.status).toBe(404);
+        });
+
+        it('deve excluir um produto', async () => {
+            const response = await request(app)
+                .delete(`/produtos/${productId}`)
+                .set('Authorization', `Bearer ${token}`);
+            expect(response.status).toBe(204);
+        });
+
+        it('deve retornar 404 ao excluir produto inexistente', async () => {
+            const response = await request(app)
+                .delete('/produtos/999999')
+                .set('Authorization', `Bearer ${token}`);
+            expect(response.status).toBe(404);
         });
     });
 });

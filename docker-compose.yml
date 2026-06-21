@@ -41,6 +41,7 @@ services:
       - DB_USER=admin
       - DB_PASSWORD=adminpassword
       - DB_NAME=stock_db
+      - JWT_SECRET=supersecretjwtkey
     ports:
       - "3000:3000"
     networks:

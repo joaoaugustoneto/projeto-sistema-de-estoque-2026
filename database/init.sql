@@ -1,5 +1,14 @@
 -- database/init.sql
 
+-- Criação da tabela de usuários para autenticação
+CREATE TABLE IF NOT EXISTS usuarios (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Criação da tabela de produtos para o sistema de estoque
 CREATE TABLE IF NOT EXISTS produtos (
     id SERIAL PRIMARY KEY,

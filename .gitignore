@@ -56,3 +56,8 @@ Thumbs.db
 .docker/
 postgres_data/
 *.db
+
+# ==========================================
+# DOCS NAO VERSIONADOS
+# ==========================================
+CHANGELOG_NAO_VERSIONADO.md

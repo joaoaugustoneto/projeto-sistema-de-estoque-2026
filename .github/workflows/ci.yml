@@ -41,6 +41,7 @@ jobs:
           DB_USER: admin
           DB_PASSWORD: adminpassword
           DB_NAME: stock_db
+          JWT_SECRET: testsecret
         run: |
           cd backend
           npm install

@@ -17,8 +17,9 @@ Cadastre produtos, acompanhe a listagem em tempo real e conte com uma infraestru
 
 | [André](https://github.com/zsilly) | [Guilherme Miranda](https://github.com/Huzume) | [João Augusto](https://github.com/joaoaugustoneto) |
 |:---:|:---:|:---:|
-| Frontend | Backend | DevOps & QA |
+| Frontend (Lead) & Full Stack | Backend & Frontend | DevOps, QA & Frontend |
 
+> **Nota sobre Responsabilidades:** Todo o time compartilha a responsabilidade pelo desenvolvimento e manutenção do Frontend, visando um projeto limpo e colaborativo, sendo o André o líder principal dessa frente.
 </div>
 
 ---

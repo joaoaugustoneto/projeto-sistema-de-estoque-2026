@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const productRoutes = require('./routes/productRoutes');
-const authRoutes = require('./routes/authRoutes');
+const authRoutes = require('./routes/authRoutes'); // ← Importado corretamente
 require('dotenv').config();
 
 const app = express();
@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Endpoint obrigatório de verificação de integridade e saúde do sistema (Healthcheck)
+// Endpoint de verificação de integridade e saúde do sistema (Healthcheck)
 app.get('/health', (req, res) => {
     res.status(200).json({ 
         status: 'UP', 
@@ -20,6 +20,9 @@ app.get('/health', (req, res) => {
 
 // Rotas principais para gerenciamento de estoque
 app.use('/produtos', productRoutes);
+app.use('/auth', authRoutes);
+
+// ✅ ROTA DE AUTENTICAÇÃO ADICIONADA: Mapeia as endpoints de login e registro
 app.use('/auth', authRoutes);
 
 // Impede que o servidor dispute portas de escuta em ambiente de testes isolados

@@ -62,9 +62,9 @@ services:
     environment:
       - VITE_API_URL=http://localhost:3000
     ports:
-      # A porta externa pode ser 8080 (para você acessar no navegador), 
+      # A porta externa será 5173 (padrão do Vite)
       # mas a porta interna do container DEVE ser 80 por causa do Nginx.
-      - "8080:80" 
+      - "5173:80" 
     networks:
       - stock-network
     depends_on:

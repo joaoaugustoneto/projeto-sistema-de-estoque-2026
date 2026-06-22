@@ -40,7 +40,9 @@ Aplicação completa para controle de inventário com autenticação JWT, CRUD d
 - 📦 **CRUD de Produtos** — Criar, listar, editar e excluir produtos do estoque
 - 🎨 **UI Premium** — Design *Glassmorphism* em Dark Mode com animações fluidas
 - 📱 **Responsivo** — Interface adaptada para desktop e mobile
-- 🧪 **Testes Automatizados** — Cobertura com Jest + Supertest para autenticação e produtos
+- 🧭 **Navegação multi-páginas** — Menu com 3 páginas (Início, Cadastro, Estoque) via React Router
+- 🔄 **Estado global compartilhado** — Dados cadastrados refletem automaticamente na listagem via Context API
+- 🧪 **Testes Automatizados** — Cobertura com Jest + Supertest para autenticação e produtos (14 testes)
 - 🐳 **Containerizado** — Toda a stack roda com um único comando Docker
 - ⚡ **CI/CD** — Pipeline no GitHub Actions: testa → builda → publica no Docker Hub
 
@@ -61,7 +63,7 @@ docker compose up --build -d
 
 | Serviço | URL |
 |---|---|
-| 🌐 **Frontend (UI)** | http://localhost:8080 |
+| 🌐 **Frontend (UI)** | http://localhost:5173 |
 | ⚙️ **Backend (API)** | http://localhost:3000 |
 | 🩺 **Healthcheck** | http://localhost:3000/health |
 
@@ -77,6 +79,7 @@ docker compose up --build -d
 | React | 18 | Biblioteca de UI |
 | Vite | 5 | Bundler e dev server |
 | React Router DOM | 6 | Roteamento client-side |
+| Context API | — | Gerenciamento de estado global (Auth + Produtos) |
 | Vanilla CSS | — | Design System (sem frameworks externos) |
 | Nginx | alpine | Servidor de produção |
 
@@ -106,51 +109,71 @@ docker compose up --build -d
 projeto-sistema-de-estoque-2026/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml              # Pipeline CI/CD (test → build → push)
+│       └── ci.yml                # Pipeline CI/CD (test → build → push)
 │
-├── frontend/                   # React + Vite (build via Nginx)
+├── frontend/                     # React + Vite (build via Nginx)
 │   ├── src/
-│   │   ├── components/         # Componentes reutilizáveis
-│   │   │   ├── Navbar.jsx      # Barra de navegação com logout
-│   │   │   ├── ProductForm.jsx # Formulário de criação/edição
-│   │   │   └── ProductList.jsx # Tabela de inventário
-│   │   ├── context/
-│   │   │   └── AuthContext.jsx # Estado global de autenticação
-│   │   ├── pages/
-│   │   │   ├── Dashboard.jsx   # Página principal (CRUD)
-│   │   │   ├── Login.jsx       # Tela de login
-│   │   │   └── Register.jsx    # Tela de cadastro
+│   │   ├── components/           # Componentes reutilizáveis
+│   │   │   ├── Navbar.jsx        # Barra de navegação com logout
+│   │   │   ├── ProductForm.jsx   # Formulário de criação/edição
+│   │   │   └── ProductList.jsx   # Tabela de inventário
+│   │   ├── context/              # Estado global (Context API)
+│   │   │   ├── AuthContext.jsx   # Estado de autenticação (login/logout)
+│   │   │   └── ProductContext.jsx# Estado de produtos (CRUD compartilhado)
+│   │   ├── pages/                # Páginas da aplicação
+│   │   │   ├── Home.jsx          # Página inicial (dashboard com resumo)
+│   │   │   ├── Cadastro.jsx      # Formulário de cadastro de produtos
+│   │   │   ├── Estoque.jsx       # Listagem completa do estoque
+│   │   │   ├── Login.jsx         # Tela de login
+│   │   │   └── Register.jsx      # Tela de cadastro de usuário
 │   │   ├── services/
-│   │   │   └── api.js          # Serviço HTTP com injeção de JWT
-│   │   ├── App.jsx             # Roteamento com rotas protegidas
-│   │   └── index.css           # Design System (Dark + Glassmorphism)
-│   └── Dockerfile              # Multi-stage build (Node → Nginx)
+│   │   │   └── api.js            # Serviço HTTP com injeção de JWT
+│   │   ├── App.jsx               # Roteamento com rotas protegidas
+│   │   ├── main.jsx              # Entry point do React
+│   │   └── index.css             # Design System (Dark + Glassmorphism)
+│   └── Dockerfile                # Multi-stage build (Node → Nginx)
 │
-├── backend/                    # Node.js + Express API
+├── backend/                      # Node.js + Express API
 │   ├── src/
 │   │   ├── config/
-│   │   │   └── db.js           # Pool de conexão PostgreSQL
+│   │   │   └── db.js             # Pool de conexão PostgreSQL
 │   │   ├── controllers/
-│   │   │   ├── authController.js    # Registro e Login
-│   │   │   └── productController.js # CRUD de Produtos
+│   │   │   ├── authController.js     # Registro e Login
+│   │   │   └── productController.js  # CRUD de Produtos
 │   │   ├── middlewares/
-│   │   │   └── authMiddleware.js    # Validação de token JWT
+│   │   │   └── authMiddleware.js     # Validação de token JWT
 │   │   ├── routes/
-│   │   │   ├── authRoutes.js        # POST /auth/register|login
-│   │   │   └── productRoutes.js     # GET|POST|PUT|DELETE /produtos
-│   │   └── server.js           # Entry point da aplicação
-│   └── tests/
-│       ├── auth.test.js        # Testes de autenticação
-│       └── produtos.test.js    # Testes de CRUD de produtos
+│   │   │   ├── authRoutes.js         # POST /auth/register|login
+│   │   │   └── productRoutes.js      # GET|POST|PUT|DELETE /produtos
+│   │   └── server.js             # Entry point da aplicação
+│   ├── tests/
+│   │   ├── auth.test.js          # Testes de autenticação (6 testes)
+│   │   └── produtos.test.js      # Testes de CRUD de produtos (8 testes)
+│   └── Dockerfile
 │
 ├── database/
-│   └── init.sql                # Criação de tabelas e seed inicial
+│   └── init.sql                  # Criação de tabelas e seed inicial
 │
-├── .env.example                # Template de variáveis de ambiente
-├── docker-compose.yml          # Orquestração: DB + Backend + Frontend
-├── deploy.sh                   # Script de deploy com rollback automático
+├── .env.example                  # Template de variáveis de ambiente
+├── docker-compose.yml            # Orquestração: DB + Backend + Frontend
+├── deploy.sh                     # Script de deploy com rollback automático
 └── README.md
 ```
+
+---
+
+## 🧩 Arquitetura Frontend (Requisitos Acadêmicos)
+
+O frontend foi projetado para atender **100% dos requisitos funcionais** da disciplina:
+
+| Requisito | Implementação |
+|---|---|
+| Menu de navegação com ≥ 3 páginas | `Navbar.jsx` com links para Início, Cadastro e Estoque |
+| Roteamento no React | `react-router-dom` v6 com `<Routes>` e `<Route>` |
+| Formulário controlado com validação | `Cadastro.jsx` com `useState` e validação de campos |
+| Listagem dinâmica com renderização múltipla | `Estoque.jsx` com `.map()` sobre array de produtos |
+| Estado compartilhado entre páginas | `ProductContext.jsx` via Context API |
+| Integração com API REST | `services/api.js` com fetch autenticado via JWT |
 
 ---
 
@@ -212,9 +235,12 @@ Os testes cobrem:
 - ✅ Registro de usuário
 - ✅ Login e geração de token
 - ✅ Rejeição de email duplicado
+- ✅ Rejeição de campos obrigatórios ausentes
 - ✅ Rejeição de senha incorreta
-- ✅ CRUD completo de produtos (com autenticação)
+- ✅ Rejeição de email não cadastrado
+- ✅ CRUD completo de produtos (listar, criar, atualizar, excluir)
 - ✅ Respostas 404 para recursos inexistentes
+- ✅ Rejeição de requisições sem token de autenticação
 
 ---
 

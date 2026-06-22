@@ -20,6 +20,7 @@ app.get('/health', (req, res) => {
 
 // Rotas principais para gerenciamento de estoque
 app.use('/produtos', productRoutes);
+app.use('/auth', authRoutes);
 
 // Impede que o servidor dispute portas de escuta em ambiente de testes isolados
 if (process.env.NODE_ENV !== 'test') {

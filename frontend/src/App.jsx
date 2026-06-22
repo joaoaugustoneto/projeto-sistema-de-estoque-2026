@@ -1,9 +1,16 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
-import Dashboard from './pages/Dashboard';
+import { ProductProvider } from './context/ProductContext';
+
+// Páginas Públicas
 import Login from './pages/Login';
 import Register from './pages/Register';
+
+// Páginas Privadas (Área Logada)
+import Home from './pages/Home';
+import Cadastro from './pages/Cadastro';
+import Estoque from './pages/Estoque';
 
 /**
  * Componente ProtectedRoute
@@ -26,26 +33,44 @@ const ProtectedRoute = ({ children }) => {
 function App() {
     return (
         <AuthProvider>
-            <Router>
-                <Routes>
-                    {/* Rotas Públicas */}
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
+            <ProductProvider>
+                <Router>
+                    <Routes>
+                        {/* Rotas Públicas */}
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
 
-                    {/* Rota Protegida - requer autenticação */}
-                    <Route
-                        path="/"
-                        element={
-                            <ProtectedRoute>
-                                <Dashboard />
-                            </ProtectedRoute>
-                        }
-                    />
+                        {/* Rotas Protegidas - requerem autenticação */}
+                        <Route
+                            path="/"
+                            element={
+                                <ProtectedRoute>
+                                    <Home />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/cadastro"
+                            element={
+                                <ProtectedRoute>
+                                    <Cadastro />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/estoque"
+                            element={
+                                <ProtectedRoute>
+                                    <Estoque />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                    {/* Fallback para rotas não encontradas */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-            </Router>
+                        {/* Fallback para rotas não encontradas */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </Router>
+            </ProductProvider>
         </AuthProvider>
     );
 }

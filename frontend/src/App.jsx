@@ -1,53 +1,33 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, AuthContext } from './context/AuthContext';
-import Dashboard from './pages/Dashboard';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import { AppProvider } from './context/AppContext';
+import Menu from './components/Menu';
+import Inicio from './pages/Inicio';
+import Cadastro from './pages/Cadastro';
+import Listagem from './pages/Listagem';
 
-/**
- * Componente ProtectedRoute
- * Verifica se o usuário está autenticado antes de renderizar a rota.
- * Caso não esteja, redireciona para /login.
- */
-const ProtectedRoute = ({ children }) => {
-    const { user, loading } = useContext(AuthContext);
+const Layout = ({ children }) => (
+  <div className="app-layout">
+    <main className="main-content">
+      <Menu />
+      {children}
+    </main>
+  </div>
+);
 
-    // Exibe nada enquanto verifica sessão salva no localStorage
-    if (loading) return null;
-
-    return user ? children : <Navigate to="/login" replace />;
-};
-
-/**
- * Componente App raiz
- * Define o roteamento da aplicação, protegendo rotas autenticadas.
- */
 function App() {
-    return (
-        <AuthProvider>
-            <Router>
-                <Routes>
-                    {/* Rotas Públicas */}
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-
-                    {/* Rota Protegida - requer autenticação */}
-                    <Route
-                        path="/"
-                        element={
-                            <ProtectedRoute>
-                                <Dashboard />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    {/* Fallback para rotas não encontradas */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-            </Router>
-        </AuthProvider>
-    );
+  return (
+    <AppProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Layout><Inicio /></Layout>} />
+          <Route path="/cadastro" element={<Layout><Cadastro /></Layout>} />
+          <Route path="/listagem" element={<Layout><Listagem /></Layout>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </AppProvider>
+  );
 }
 
 export default App;

@@ -1,60 +1,75 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useApp } from '../context/AppContext';
 
 export default function Listagem() {
-  const [produtos, setProdutos] = useState([]);
+  const { products, deleteProduct } = useApp();
   const [erro, setErro] = useState('');
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-
-  const buscarProdutos = async () => {
+  const handleDelete = async (id) => {
+    setErro('');
     try {
-      const response = await fetch(`${API_URL}/produtos`);
-      if (response.ok) {
-        const data = await response.json();
-        setProdutos(data);
-      } else {
-        setErro('Erro ao processar a lista vinda do banco.');
-      }
+      await deleteProduct(id);
     } catch (err) {
-      setErro('Não foi possível conectar à API de Estoque.');
+      setErro('Não foi possível excluir o produto.');
     }
   };
 
-  useEffect(() => {
-    buscarProdutos();
-  }, []);
-
   return (
-    <div style={{ backgroundColor: 'var(--card-bg)', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+    <div className="glass" style={{ padding: '24px', borderRadius: '16px', boxShadow: 'var(--shadow-sm)' }}>
       <h2>📋 Itens Cadastrados em Estoque</h2>
-      {erro && <div style={{ color: 'white', backgroundColor: 'var(--error-color)', padding: '10px', borderRadius: '4px', margin: '15px 0' }}>{erro}</div>}
-      
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px', textAlign: 'left' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f8f9fa' }}>
-            <th style={{ padding: '12px', borderBottom: '2px solid var(--border-color)' }}>ID</th>
-            <th style={{ padding: '12px', borderBottom: '2px solid var(--border-color)' }}>Nome</th>
-            <th style={{ padding: '12px', borderBottom: '2px solid var(--border-color)' }}>Descrição</th>
-            <th style={{ padding: '12px', borderBottom: '2px solid var(--border-color)' }}>Quantidade</th>
-            <th style={{ padding: '12px', borderBottom: '2px solid var(--border-color)' }}>Preço</th>
-          </tr>
-        </thead>
-        <tbody>
-          {produtos.length === 0 ? (
-            <tr><td colSpan="5" style={{ padding: '12px', textAlign: 'center', color: '#999' }}>Nenhum produto em estoque encontrado.</td></tr>
-          ) : (
-            produtos.map((p) => (
-              <tr key={p.id}>
-                <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>{p.id}</td>
-                <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}><strong>{p.nome}</strong></td>
-                <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>{p.descricao}</td>
-                <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>{p.quantidade}</td>
-                <td style={{ padding: '12px', borderBottom: '1px solid var(--border-color)' }}>R$ {Number(p.preco).toFixed(2)}</td>
+      {erro && (
+        <div style={{ color: '#fff', backgroundColor: 'rgba(239,68,68,0.2)', padding: '14px', borderRadius: '12px', margin: '18px 0' }}>
+          {erro}
+        </div>
+      )}
+      <div style={{ overflowX: 'auto', marginTop: '18px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr style={{ color: 'var(--text-secondary)', textTransform: 'uppercase', fontSize: '0.8rem' }}>
+              <th style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>ID</th>
+              <th style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>Nome</th>
+              <th style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>Descrição</th>
+              <th style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>Quantidade</th>
+              <th style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>Preço</th>
+              <th style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.length === 0 ? (
+              <tr>
+                <td colSpan="6" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                  Nenhum produto em estoque encontrado.
+                </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              products.map((p) => (
+                <tr key={p.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  <td style={{ padding: '14px 16px', color: 'var(--text-secondary)' }}>#{p.id}</td>
+                  <td style={{ padding: '14px 16px', fontWeight: 600 }}>{p.nome}</td>
+                  <td style={{ padding: '14px 16px', color: 'var(--text-secondary)' }}>{p.descricao || '-'}</td>
+                  <td style={{ padding: '14px 16px' }}>{p.quantidade}</td>
+                  <td style={{ padding: '14px 16px' }}>R$ {Number(p.preco).toFixed(2)}</td>
+                  <td style={{ padding: '14px 16px' }}>
+                    <button
+                      onClick={() => handleDelete(p.id)}
+                      style={{
+                        background: 'rgba(239,68,68,0.15)',
+                        color: '#ef4444',
+                        border: 'none',
+                        borderRadius: '12px',
+                        padding: '8px 12px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Excluir
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

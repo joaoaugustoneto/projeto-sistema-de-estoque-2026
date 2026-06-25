@@ -24,31 +24,30 @@ Aplicação completa para controle de inventário com autenticação JWT, CRUD d
 
 | [André](https://github.com/zsilly) | [Guilherme Miranda](https://github.com/Huzume) | [João Augusto](https://github.com/joaoaugustoneto) |
 |:---:|:---:|:---:|
-| 🎨 **Frontend Lead** | ⚙️ **Backend** | 🚀 **DevOps & SRE** |
+|  **Frontend Lead** |  **Backend** |  **DevOps & SRE** |
 | React · UI/UX · Componentização | Node.js · API REST · JWT · Testes | Docker · CI/CD · Infraestrutura |
 
-> 💡 **Responsabilidade Compartilhada:** Todo o time contribui com o Frontend. André lidera essa frente como principal responsável.
-
+>  **Responsabilidade Compartilhada:** Todo o time contribui com todas as áreas do projeto. O projeto foi feito em uma ligação onde foi debatido tudo sobre o projeto.
 </div>
 
 ---
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 - 🔐 **Autenticação completa** — Cadastro e Login com hash `bcrypt` e tokens `JWT`
 - 🛡️ **Rotas protegidas** — Todas as operações de inventário exigem autenticação
 - 📦 **CRUD de Produtos** — Criar, listar, editar e excluir produtos do estoque
-- 🎨 **UI Premium** — Design *Glassmorphism* em Dark Mode com animações fluidas
+- **UI Bonita** — Design *Glassmorphism* em Dark Mode com animações fluidas
 - 📱 **Responsivo** — Interface adaptada para desktop e mobile
-- 🧭 **Navegação multi-páginas** — Menu com 3 páginas (Início, Cadastro, Estoque) via React Router
-- 🔄 **Estado global compartilhado** — Dados cadastrados refletem automaticamente na listagem via Context API
+- **Navegação multi-páginas** — Menu com 3 páginas (Início, Cadastro, Estoque) via React Router
+- **Estado global compartilhado** — Dados cadastrados refletem automaticamente na listagem via Context API
 - 🧪 **Testes Automatizados** — Cobertura com Jest + Supertest para autenticação e produtos (14 testes)
 - 🐳 **Containerizado** — Toda a stack roda com um único comando Docker
-- ⚡ **CI/CD** — Pipeline no GitHub Actions: testa → builda → publica no Docker Hub
+- **CI/CD** — Pipeline no GitHub Actions: testa → builda → publica no Docker Hub
 
 ---
 
-## 🚀 Início Rápido
+## Início Rápido
 
 > **Pré-requisitos:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e em execução.
 
@@ -162,7 +161,7 @@ projeto-sistema-de-estoque-2026/
 
 ---
 
-## 🧩 Arquitetura Frontend (Requisitos Acadêmicos)
+## Arquitetura Frontend (Requisitos Acadêmicos)
 
 O frontend foi projetado para atender **100% dos requisitos funcionais** da disciplina:
 
@@ -177,7 +176,7 @@ O frontend foi projetado para atender **100% dos requisitos funcionais** da disc
 
 ---
 
-## 🌿 Padrão de Branches & Commits
+## Padrão de Branches & Commits
 
 ```
 main              ← Branch de produção (protegida)
